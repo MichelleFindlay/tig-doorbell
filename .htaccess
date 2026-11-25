@@ -1,0 +1,35 @@
+# TIG Door — Apache settings for running from a single web folder (e.g. door.example.com).
+
+DirectoryIndex index.php
+
+# Folder listings are prevented with blank index.html files instead of "Options -Indexes",
+# which some hosts don't allow in .htaccess (it causes a 500 error for the whole site).
+
+# Never serve config, docs, databases or dotfiles.
+<FilesMatch "^(config(\.example)?\.php|README\.md|\..*)$|\.(sqlite|sqlite-wal|sqlite-shm|db|log)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Block the private folders even if their own .htaccess files go missing.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(data|src|bin)(/|$) - [F,L]
+
+    # Push notifications only work over HTTPS. Uncomment once your SSL certificate is active:
+    # RewriteCond %{HTTPS} !=on
+    # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# The service worker and manifest must not be cached for long.
+<FilesMatch "^(sw\.js|manifest\.php)$">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "no-cache"
+    </IfModule>
+</FilesMatch>
+
