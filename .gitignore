@@ -1,0 +1,9 @@
+# Local settings (admin access word, contact address, branding). Start from config.example.php.
+/config.php
+
+# Database, push keys and the pointer to the randomly named DB file.
+/data/*.sqlite*
+/data/db-name.php
+
+# Build output
+/dist/
